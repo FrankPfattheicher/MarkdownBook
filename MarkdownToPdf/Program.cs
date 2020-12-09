@@ -13,7 +13,8 @@ namespace MarkdownToPdf
         {
             Console.WriteLine("Markdown To PDF");
 
-            var initialDocument = @"C:\ICT Baden\Informant\docs\manual\Informant.md";
+            //var initialDocument = @"C:\ICT Baden\Informant\docs\manual\Informant.md";
+            var initialDocument = @"/home/frank/ICT Baden/MarkdownToPdf/README.md";
             
             var document = new MarkdownDocument();
             var documentPath = Path.GetDirectoryName(initialDocument);
@@ -58,6 +59,7 @@ namespace MarkdownToPdf
                 }
             }
 
+            Console.WriteLine("done.");
         }
     }
 }
