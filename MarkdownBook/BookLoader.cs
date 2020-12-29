@@ -34,7 +34,7 @@ namespace MarkdownBook
                 }
                 Console.WriteLine("Processing " + documentFile);
                 var document = new Chapter(documentFile);
-                book.Documents.Add(document);
+                book.Chapters.Add(document);
                 
                 foreach (var referencedDocument in document.GetReferencedDocuments())
                 {

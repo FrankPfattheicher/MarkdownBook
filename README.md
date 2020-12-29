@@ -1,10 +1,12 @@
-# MarkdownToPdf
-Create PDF documentation from several markdown files.
+# MarkdownBook
+Create documentation from several markdown files.
 
 ### Icon Symbols
 /!\ Alert   
 (i) Info   
-(c) Copyright
+(c) &copy; Copyright
+
+AT&T
 
 ### Page Break
 <div style="page-break-after: always;"></div>

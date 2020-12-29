@@ -16,7 +16,7 @@ namespace MarkdownBook
             var loader = new BookLoader(initialDocument);
             var book = loader.Load();
             
-            Console.WriteLine($"Book '{book.Name}' loaded with {book.Documents.Count} chapters.");
+            Console.WriteLine($"Book '{book.Name}' loaded with {book.Chapters.Count} chapters.");
 
             var renderer = new HtmlRenderer(Path.GetDirectoryName(initialDocument));
             var html = renderer.RenderBook(book);

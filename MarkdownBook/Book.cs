@@ -8,12 +8,12 @@ namespace MarkdownBook
     {
         public string Name { get; private set; }
 
-        public List<Chapter> Documents { get; private set; }
+        public List<Chapter> Chapters { get; private set; }
         
         public Book(string name)
         {
             Name = name;
-            Documents = new List<Chapter>();
+            Chapters = new List<Chapter>();
         }
 
 
