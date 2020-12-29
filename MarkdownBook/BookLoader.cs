@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace MarkdownToPdf
+namespace MarkdownBook
 {
     public class BookLoader
     {
@@ -33,7 +33,7 @@ namespace MarkdownToPdf
                     continue;
                 }
                 Console.WriteLine("Processing " + documentFile);
-                var document = new Document(documentFile);
+                var document = new Chapter(documentFile);
                 book.Documents.Add(document);
                 
                 foreach (var referencedDocument in document.GetReferencedDocuments())

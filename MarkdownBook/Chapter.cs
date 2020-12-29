@@ -7,16 +7,16 @@ using Microsoft.Toolkit.Parsers.Markdown;
 using Microsoft.Toolkit.Parsers.Markdown.Blocks;
 using Microsoft.Toolkit.Parsers.Markdown.Inlines;
 
-namespace MarkdownToPdf
+namespace MarkdownBook
 {
     [DebuggerDisplay("{" + nameof(Name) + "}")]
-    public class Document
+    public class Chapter
     {
         public string Name { get; private set; }
         private readonly string _fileName;
         private readonly MarkdownDocument _markdown;
         
-        public Document(string fileName)
+        public Chapter(string fileName)
         {
             _fileName = fileName;
             Name = Path.GetFileNameWithoutExtension(fileName);

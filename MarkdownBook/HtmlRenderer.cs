@@ -7,7 +7,7 @@ using Microsoft.Toolkit.Parsers.Markdown.Blocks;
 using Microsoft.Toolkit.Parsers.Markdown.Inlines;
 using Newtonsoft.Json;
 
-namespace MarkdownToPdf
+namespace MarkdownBook
 {
     public class HtmlRenderer
     {
@@ -32,13 +32,13 @@ namespace MarkdownToPdf
         }
         
         // ReSharper disable once MemberCanBePrivate.Global
-        public StringBuilder RenderDocument(Document document)
+        public StringBuilder RenderDocument(Chapter chapter)
         {
             var html = new StringBuilder();
 
-            html.AppendLine($"<div id={document.Name}></div>");
+            html.AppendLine($"<div id={chapter.Name}></div>");
             
-            foreach (var block in document.GetMarkdownBlocks())
+            foreach (var block in chapter.GetMarkdownBlocks())
             {
                 if (block is HeaderBlock headerBlock)
                 {

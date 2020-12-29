@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace MarkdownToPdf
+namespace MarkdownBook
 {
     internal static class Program
     {
@@ -11,7 +11,7 @@ namespace MarkdownToPdf
             Console.WriteLine("Markdown To PDF");
 
             const string initialDocument = @"C:\ICT Baden\Informant\docs\manual\Informant.md";
-            //const string initialDocument = @"/home/frank/ICT Baden/MarkdownToPdf/README.md";
+            //const string initialDocument = @"/home/frank/ICT Baden/MarkdownBook/README.md";
 
             var loader = new BookLoader(initialDocument);
             var book = loader.Load();
