@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 
 namespace MarkdownBook
 {
@@ -8,21 +9,43 @@ namespace MarkdownBook
         // ReSharper disable once UnusedParameter.Local
         private static void Main(string[] args)
         {
-            Console.WriteLine("Markdown To PDF");
+            Console.WriteLine("MarkdownBook");
 
-            const string initialDocument = @"C:\ICT Baden\Informant\docs\manual\Informant.md";
-            //const string initialDocument = @"/home/frank/ICT Baden/MarkdownBook/README.md";
+            if (args.Length == 0)
+            {
+                Console.WriteLine($"Specify initial markdown document as parameter.");
+                Environment.Exit(0);
+            }
+            var initialDocument = args[0];
+            Console.WriteLine($"Using initial markdown document {initialDocument}.");
 
+            if (!File.Exists(initialDocument))
+            {
+                Console.WriteLine($"Initial markdown document not found.");
+                Environment.Exit(1);
+            }
+            
             var loader = new BookLoader(initialDocument);
             var book = loader.Load();
             
             Console.WriteLine($"Book '{book.Name}' loaded with {book.Chapters.Count} chapters.");
 
-            var renderer = new HtmlRenderer(Path.GetDirectoryName(initialDocument));
-            var html = renderer.RenderBook(book);
-
-            var htmlFile = $"{book.Name}.html";
-            File.WriteAllText(htmlFile, html.ToString());
+            var options = new RenderOptions
+            {
+                SourcePath = Path.GetDirectoryName(initialDocument),
+                TargetPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                CopyAssets = true,
+                SingleFile = false
+            };
+            
+            var css = Path.ChangeExtension(initialDocument, "css");
+            if (File.Exists(css))
+            {
+                options.CssFile = css;
+            }
+            
+            var renderer = new HtmlRenderer(options);
+            renderer.RenderBookToFile(book);
             
             Console.WriteLine("done.");
         }

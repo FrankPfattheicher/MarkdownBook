@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Toolkit.Parsers.Markdown;
@@ -12,12 +13,52 @@ namespace MarkdownBook
 {
     public class HtmlRenderer
     {
-        private readonly string _sourcePath;
+        private readonly RenderOptions _options;
 
-        public HtmlRenderer(string sourcePath)
+        public HtmlRenderer(RenderOptions options)
         {
-            _sourcePath = sourcePath;
+            _options = options;
         }
+
+        public void RenderBookToFile(Book book)
+        {
+            if (_options.SingleFile)
+            {
+                RenderToFile(book.Name, RenderBook(book));
+            }
+            else
+            {
+                foreach (var chapter in book.Chapters)
+                {
+                    RenderToFile(chapter.Name, RenderChapter(chapter));
+                }
+            }
+        }
+
+        private void RenderToFile(string name, StringBuilder content)
+        {
+            var html = new StringBuilder();
+            html.AppendLine("<!DOCTYPE html>");
+            html.AppendLine("<html>");
+            html.AppendLine("<head>");
+            html.AppendLine($"<title>{name}</title>");
+            if (!string.IsNullOrEmpty(_options.CssFile))
+            {
+                html.AppendLine("<style>");
+                foreach (var cssLine in File.ReadAllLines(_options.CssFile))
+                {
+                    html.AppendLine(cssLine);
+                }
+                html.AppendLine("</style>");
+            }
+            html.AppendLine("</head>");
+            html.Append(content);
+            html.AppendLine("</html>");
+            
+            var htmlFile = $"{name}.html";
+            File.WriteAllText(htmlFile, html.ToString());
+        }
+        
 
         public StringBuilder RenderBook(Book book)
         {
@@ -25,21 +66,38 @@ namespace MarkdownBook
 
             foreach (var document in book.Chapters)
             {
-                html.Append(RenderDocument(document));
-                html.Append("<div style=\"break-after:page\"></div>");
+                html.Append(RenderChapter(document));
+                html.Append("<div class=\"page-break\" style=\"break-after:page\"></div>");
             }
 
             return html;
         }
 
         // ReSharper disable once MemberCanBePrivate.Global
-        public StringBuilder RenderDocument(Chapter chapter)
+        public StringBuilder RenderChapter(Chapter chapter)
         {
             var html = new StringBuilder();
 
             html.AppendLine($"<div id={chapter.Name}></div>");
 
-            html.Append(RenderBlocks(chapter.GetMarkdownBlocks()));
+            var chapterBlocks = chapter.GetMarkdownBlocks();
+            
+            if (_options.SingleFile)
+            {
+                // remove pending link to next document in single file mode
+                var lastBlock = chapterBlocks.Last();
+                if (lastBlock is ParagraphBlock paragraphBlock)
+                {
+                    if (paragraphBlock.Inlines.Count == 1 && paragraphBlock.Inlines.First() is MarkdownLinkInline)
+                    {
+                        chapterBlocks = chapterBlocks
+                            .Take(chapterBlocks.Count - 1)
+                            .ToList();
+                    }
+                }
+            }
+            
+            html.Append(RenderBlocks(chapterBlocks));
 
             return html;
         }
@@ -180,7 +238,14 @@ namespace MarkdownBook
                 {
                     if (href.EndsWith(".md", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        href = "#" + href.Substring(0, href.Length - 3);
+                        if (_options.SingleFile)
+                        {
+                            href = "#" + href.Substring(0, href.Length - 3);
+                        }
+                        else
+                        {
+                            href = Path.ChangeExtension(href, "html");
+                        }
                     }
 
                     html.Append($"<a href={href}>");
@@ -204,7 +269,14 @@ namespace MarkdownBook
                     imageUrl = match.Groups[1].Value;
                 }
 
-                imageUrl = Path.Combine(_sourcePath, imageUrl);
+                imageUrl = Path.Combine(_options.SourcePath, imageUrl);
+                if (_options.CopyAssets)
+                {
+                    var fileName = Path.GetFileName(imageUrl);
+                    var targetUrl = Path.Combine(_options.TargetPath, fileName);
+                    CopyAsset(imageUrl, targetUrl);
+                    imageUrl = fileName;
+                }
                 html.Append($"<img src=\"{imageUrl}\" title=\"{title}\">");
             }
             else if (inline is CodeInline code)
@@ -268,6 +340,22 @@ namespace MarkdownBook
             }
 
             return html;
+        }
+
+        private static void CopyAsset(string sourceUrl, string targetUrl)
+        {
+            try
+            {
+                if (File.Exists(targetUrl))
+                {
+                    File.Delete(targetUrl);
+                }
+                File.Copy(sourceUrl, targetUrl);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
 
         private string ReplaceSymbols(string text)
