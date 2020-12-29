@@ -1,21 +1,24 @@
 # MarkdownBook
 Create documentation from several markdown files.
 
-### Icon Symbols
-/!\ Alert   
-(i) Info   
-(c) &copy; Copyright
+**How it works**
+Starting wit an initial markdown document, 
+all linked documents are collected to create complete documentation. 
 
-AT&T
+## Commandline
 
-### Page Break
-<div style="page-break-after: always;"></div>
+    MarkdownBook <initialMarkdownDocument> [-c] [-m]
 
-:smile:
+**Options**   
+-c : Copy asset files to output directory   
+-m : Create multiple output files
 
-[ ] unchecked  
-[x] checked
+## HTML renderer
+The HTML renderer supports single or multiple file documentation output.
 
-This is ~~more~~ content H^2O.
+CSS file is used if available as file named as initial document.
 
+
+
+---
 (c) 2020 ICT Baden GmbH

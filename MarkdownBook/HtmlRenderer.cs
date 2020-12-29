@@ -22,16 +22,16 @@ namespace MarkdownBook
 
         public void RenderBookToFile(Book book)
         {
-            if (_options.SingleFile)
-            {
-                RenderToFile(book.Name, RenderBook(book));
-            }
-            else
+            if (_options.MultipleFiles)
             {
                 foreach (var chapter in book.Chapters)
                 {
                     RenderToFile(chapter.Name, RenderChapter(chapter));
                 }
+            }
+            else
+            {
+                RenderToFile(book.Name, RenderBook(book));
             }
         }
 
@@ -82,7 +82,7 @@ namespace MarkdownBook
 
             var chapterBlocks = chapter.GetMarkdownBlocks();
             
-            if (_options.SingleFile)
+            if (!_options.MultipleFiles)
             {
                 // remove pending link to next document in single file mode
                 var lastBlock = chapterBlocks.Last();
@@ -238,13 +238,13 @@ namespace MarkdownBook
                 {
                     if (href.EndsWith(".md", StringComparison.InvariantCultureIgnoreCase))
                     {
-                        if (_options.SingleFile)
+                        if (_options.MultipleFiles)
                         {
-                            href = "#" + href.Substring(0, href.Length - 3);
+                            href = Path.ChangeExtension(href, "html");
                         }
                         else
                         {
-                            href = Path.ChangeExtension(href, "html");
+                            href = "#" + href.Substring(0, href.Length - 3);
                         }
                     }
 

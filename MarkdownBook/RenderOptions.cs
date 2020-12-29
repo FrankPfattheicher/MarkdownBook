@@ -9,7 +9,7 @@ namespace MarkdownBook
 
         public string CssFile { get; set; }
 
-        public bool SingleFile { get; set; }
+        public bool MultipleFiles { get; set; }
         public bool CopyAssets { get; set; }
 
         public RenderOptions()
@@ -17,7 +17,7 @@ namespace MarkdownBook
             SourcePath = ".";
             TargetPath = ".";
 
-            SingleFile = true;
+            MultipleFiles = false;
             CopyAssets = false;
         }
     }

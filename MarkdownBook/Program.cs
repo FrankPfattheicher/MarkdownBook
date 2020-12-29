@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace MarkdownBook
@@ -34,8 +35,8 @@ namespace MarkdownBook
             {
                 SourcePath = Path.GetDirectoryName(initialDocument),
                 TargetPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
-                CopyAssets = true,
-                SingleFile = false
+                CopyAssets = args.Any(a => a == "-c"),
+                MultipleFiles = args.Any(a => a == "-m")
             };
             
             var css = Path.ChangeExtension(initialDocument, "css");
