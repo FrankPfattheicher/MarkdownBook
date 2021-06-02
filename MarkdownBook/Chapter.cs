@@ -34,9 +34,21 @@ namespace MarkdownBook
             
             foreach (var block in _markdown.Blocks)
             {
-                if (!(block is ParagraphBlock paragraph)) continue;
-                
-                foreach (var inline in paragraph.Inlines)
+                var inlines = new MarkdownInline[0];
+                switch (block)
+                {
+                    case ParagraphBlock paragraph:
+                        inlines = paragraph.Inlines.ToArray();
+                        break;
+                    case TableBlock table:
+                        inlines = table.Rows
+                            .SelectMany(row => row.Cells)
+                            .SelectMany(cell => cell.Inlines)
+                            .ToArray();
+                        break;
+                }
+                    
+                foreach (var inline in inlines)
                 {
                     if (!(inline is MarkdownLinkInline mdLink)) continue;
                     
