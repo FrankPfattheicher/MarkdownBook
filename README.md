@@ -18,7 +18,11 @@ The HTML renderer supports single or multiple file documentation output.
 
 CSS file is used if available as file named as initial document.
 
+## Future
+Due to Microsoft.Toolkit.Parsers is now deprecated,
+i have to move to **Markdig**...
 
+https://github.com/xoofx/markdig
 
 ---
-(c) 2020 ICT Baden GmbH
+(c) 2020-2022 ICT Baden GmbH
